@@ -2,6 +2,7 @@ package net.codejava;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,8 +16,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class BookController {
 	@Autowired
     private JdbcTemplate jdbcTemplate;
-
-    @GetMapping("/index")
+	
+	@Autowired
+    private BookService bookService;
+	
+    @GetMapping("/books")
     public String index(Model model) {
         
         return "books/index";
@@ -28,9 +32,9 @@ public class BookController {
     }
     
     //新規入力データの保存
-    @PostMapping("/index")
-    public String create(BookForm bookForm) {
-    	
+    @PostMapping("/books")
+    public String create(BookForm bookForm, @AuthenticationPrincipal CustomUserDetails user) {
+    	bookService.setBook(bookForm, user);
     	return "redirect:/index";
     }
     
